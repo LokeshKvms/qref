@@ -116,9 +116,10 @@
     <script>
         // Create a small toast container
         const toast = document.createElement('div');
-        toast.style.position = 'fixed';
-        toast.style.bottom = '20px';
-        toast.style.right = '20px';
+        toast.style.position = 'absolute'; // Changed from fixed to absolute
+        toast.style.top = '0';
+        toast.style.left = '0';
+        toast.style.transform = 'none'; // reset transform, will set dynamically
         toast.style.backgroundColor = 'rgba(0,0,0,0.7)';
         toast.style.color = 'white';
         toast.style.padding = '8px 12px';
@@ -129,14 +130,29 @@
         toast.style.transition = 'opacity 0.3s ease-in-out';
         document.body.appendChild(toast);
 
-        function showToast(message) {
+        // Show toast near the clicked element
+        function showToast(message, nearElement) {
             toast.textContent = message;
+
+            if (nearElement) {
+                const rect = nearElement.getBoundingClientRect();
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+
+                // Position toast 10px below the button, horizontally centered
+                toast.style.top = (rect.bottom + scrollTop + 10) + 'px';
+                toast.style.left = (rect.left + scrollLeft + rect.width / 2) + 'px';
+                // toast.style.transform = 'translateX(-50%)';
+            }
+
             toast.style.opacity = '1';
+
             setTimeout(() => {
                 toast.style.opacity = '0';
             }, 2000);
         }
 
+        // Search input filtering logic (unchanged)
         document.getElementById('searchInput').addEventListener('input', function() {
             const query = this.value.toLowerCase().trim();
             const cards = document.querySelectorAll('.grid > div');
@@ -154,11 +170,9 @@
                 }
             });
 
-            // Update the total count text
             const totalCountSpan = document.querySelector('.text-right span.font-semibold');
             totalCountSpan.textContent = visibleCount;
 
-            // Show or hide the "no results" message
             const noResultsMessage = document.getElementById('noResultsMessage');
             if (visibleCount === 0) {
                 noResultsMessage.classList.remove('hidden');
@@ -167,8 +181,7 @@
             }
         });
 
-
-
+        // Copy button click event with updated toast position
         document.querySelectorAll('.copy-btn').forEach(button => {
             button.addEventListener('click', () => {
                 const url = button.getAttribute('data-url');
@@ -177,10 +190,10 @@
                 if (navigator.clipboard && navigator.clipboard.writeText) {
                     navigator.clipboard.writeText(url)
                         .then(() => {
-                            showToast('Link copied to clipboard!');
+                            showToast('Link copied to clipboard!', button);
                         })
                         .catch(err => {
-                            showToast('Failed to copy link: ' + err);
+                            showToast('Failed to copy link: ' + err, button);
                         });
                 } else {
                     // Fallback for older browsers
@@ -191,17 +204,18 @@
                     try {
                         const successful = document.execCommand('copy');
                         if (successful) {
-                            showToast('Link copied to clipboard!');
+                            showToast('Link copied to clipboard!', button);
                         } else {
-                            showToast('Failed to copy link.');
+                            showToast('Failed to copy link.', button);
                         }
                     } catch (err) {
-                        showToast('Failed to copy link: ' + err);
+                        showToast('Failed to copy link: ' + err, button);
                     }
                     document.body.removeChild(textarea);
                 }
             });
         });
     </script>
+
 
 </x-app-layout>
