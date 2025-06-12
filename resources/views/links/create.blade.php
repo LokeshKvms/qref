@@ -56,7 +56,7 @@
                                     d="M3 5a2 2 0 012-2h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V5zm16 0L10 14l-4-4-3 3v5h16V5z" />
                             </svg>
                         </span>
-                        <input placeholder="Icon Link" type="url" name="image_url" value="{{ old('image_url') }}"
+                        <input placeholder="https://placehold.co/10?text=Icon" type="url" name="image_url" value="{{ old('image_url') }}"
                             class="w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded text-sm focus:outline-none focus:ring focus:border-blue-400">
                     </div>
                     <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Leave blank to use site favicon</p>
