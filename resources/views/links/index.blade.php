@@ -17,10 +17,12 @@
         <div class="mb-10 text-center">
             <h1 class="text-3xl font-bold text-gray-800 flex items-center justify-center space-x-2">
                 <svg class="h-8 w-8 text-blue-600" fill="none" stroke="currentColor" stroke-width="2"
-                    viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round"
-                        d="M13.828 21a2 2 0 01-1.414-.586l-8.828-8.828A4 4 0 116.343 5.343L12 11l5.657-5.657a4 4 0 015.656 5.656l-8.828 8.828a2 2 0 01-1.414.586z" />
+                    viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path d="M10 13a5 5 0 007.07 0l2.83-2.83a5 5 0 00-7.07-7.07l-1.41 1.41" />
+                    <path d="M14 11a5 5 0 00-7.07 0l-2.83 2.83a5 5 0 007.07 7.07l1.41-1.41" />
                 </svg>
+
                 <span>My Saved Links</span>
             </h1>
             <p class="text-gray-600 mt-2">Easily manage and access your favorite resources.</p>
@@ -36,6 +38,9 @@
         {{-- Stats --}}
         <div class="mb-6 text-right text-sm text-gray-600">
             Total Links: <span class="font-semibold text-gray-800">{{ $links->count() }}</span>
+        </div>
+        <div id="noResultsMessage" class="text-center text-gray-500 mt-6 hidden">
+            No links found matching your search.
         </div>
 
         {{-- Links Grid --}}
@@ -135,6 +140,7 @@
         document.getElementById('searchInput').addEventListener('input', function() {
             const query = this.value.toLowerCase().trim();
             const cards = document.querySelectorAll('.grid > div');
+            let visibleCount = 0;
 
             cards.forEach(card => {
                 const title = card.querySelector('a.text-lg')?.textContent.toLowerCase() || '';
@@ -142,11 +148,25 @@
 
                 if (title.includes(query) || url.includes(query)) {
                     card.style.display = '';
+                    visibleCount++;
                 } else {
                     card.style.display = 'none';
                 }
             });
+
+            // Update the total count text
+            const totalCountSpan = document.querySelector('.text-right span.font-semibold');
+            totalCountSpan.textContent = visibleCount;
+
+            // Show or hide the "no results" message
+            const noResultsMessage = document.getElementById('noResultsMessage');
+            if (visibleCount === 0) {
+                noResultsMessage.classList.remove('hidden');
+            } else {
+                noResultsMessage.classList.add('hidden');
+            }
         });
+
 
 
         document.querySelectorAll('.copy-btn').forEach(button => {
