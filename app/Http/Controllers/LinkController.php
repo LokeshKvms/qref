@@ -12,14 +12,19 @@ class LinkController extends Controller
 {
     public function index()
     {
-        $links = Auth::user()->links()->with(['globalTags', 'userTags'])->latest()->get();
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        $links = $user->links()->with(['globalTags', 'userTags'])->latest()->get();
         return view('links.index', compact('links'));
     }
 
     public function create()
     {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
         $globalTags = Tag::all();
-        $userTags = Auth::user()->userTags()->get();
+        $userTags = $user->userTags()->get();
 
         return view('links.create', compact('globalTags', 'userTags'));
     }
@@ -33,6 +38,7 @@ class LinkController extends Controller
             'tags' => 'nullable|array',
         ]);
 
+        /** @var \App\Models\User $user */
         $user = Auth::user();
         $link = $user->links()->create($request->only('title', 'url', 'image_url'));
 
@@ -66,9 +72,10 @@ class LinkController extends Controller
     public function edit(Link $link)
     {
         $this->authorize('update', $link);
-
         $globalTags = Tag::all();
-        $userTags = Auth::user()->userTags()->get();
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+        $userTags = $user->userTags()->get();
 
         return view('links.edit', compact('link', 'globalTags', 'userTags'));
     }

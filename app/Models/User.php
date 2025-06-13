@@ -27,12 +27,12 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    
     public function links(): HasMany
     {
         return $this->hasMany(Link::class);
     }
 
-    // ✅ Add this method:
     public function userTags(): HasMany
     {
         return $this->hasMany(UserTag::class);
