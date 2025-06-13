@@ -192,75 +192,70 @@
             });
         });
 
-        document.getElementById('searchInput').addEventListener('input', function() {
-            const query = this.value.toLowerCase().trim();
-            const cards = document.querySelectorAll('.grid > div');
+        let activeTagId = null; // Track currently selected tag filter
+        const searchInput = document.getElementById('searchInput');
+        const cards = document.querySelectorAll('.link-card');
+        const totalCountSpan = document.querySelector('.text-right span.font-semibold');
+        const noResultsMessage = document.getElementById('noResultsMessage');
+
+        function filterCards() {
+            const query = searchInput.value.toLowerCase().trim();
+
             let visibleCount = 0;
-
             cards.forEach(card => {
-                const title = card.querySelector('a.text-lg')?.textContent.toLowerCase() || '';
-                const url = card.querySelector('a.text-sm')?.textContent.toLowerCase() || '';
+                const tags = card.dataset.tags.split(',');
+                const tagMatch = !activeTagId || tags.includes(activeTagId);
 
-                if (title.includes(query) || url.includes(query)) {
-                    card.style.display = '';
-                    visibleCount++;
-                } else {
-                    card.style.display = 'none';
-                }
-            });
+                if (tagMatch) {
+                    const title = card.querySelector('a.text-lg')?.textContent.toLowerCase() || '';
+                    const url = card.querySelector('a.text-sm')?.textContent.toLowerCase() || '';
 
-            const totalCountSpan = document.querySelector('.text-right span.font-semibold');
-            totalCountSpan.textContent = visibleCount;
-
-            const noResultsMessage = document.getElementById('noResultsMessage');
-            if (visibleCount === 0) {
-                noResultsMessage.classList.remove('hidden');
-            } else {
-                noResultsMessage.classList.add('hidden');
-            }
-        });
-
-        document.querySelectorAll('.tag-badge').forEach(badge => {
-            badge.addEventListener('click', () => {
-                const tagId = badge.dataset.tagId;
-                const cards = document.querySelectorAll('.link-card');
-                let visibleCount = 0;
-
-                cards.forEach(card => {
-                    const tags = card.dataset.tags.split(',');
-                    if (tags.includes(tagId)) {
+                    if (title.includes(query) || url.includes(query)) {
                         card.style.display = '';
                         visibleCount++;
                     } else {
                         card.style.display = 'none';
                     }
-                });
-
-                const totalCountSpan = document.querySelector('.text-right span.font-semibold');
-                totalCountSpan.textContent = visibleCount;
-
-                const noResultsMessage = document.getElementById('noResultsMessage');
-                if (visibleCount === 0) {
-                    noResultsMessage.classList.remove('hidden');
                 } else {
-                    noResultsMessage.classList.add('hidden');
+                    card.style.display = 'none';
                 }
+            });
+
+            totalCountSpan.textContent = visibleCount;
+            if (visibleCount === 0) {
+                noResultsMessage.classList.remove('hidden');
+            } else {
+                noResultsMessage.classList.add('hidden');
+            }
+        }
+
+        searchInput.addEventListener('input', filterCards);
+
+        document.querySelectorAll('.tag-badge').forEach(badge => {
+            badge.addEventListener('click', () => {
+                const clickedTagId = badge.dataset.tagId;
+
+                // Toggle active tag filter on/off
+                if (activeTagId === clickedTagId) {
+                    activeTagId = null;
+                } else {
+                    activeTagId = clickedTagId;
+                }
+
+                filterCards();
             });
         });
 
         document.getElementById('clearFiltersBtn').addEventListener('click', () => {
-            const searchInput = document.getElementById('searchInput');
+            activeTagId = null;
             searchInput.value = '';
 
-            const cards = document.querySelectorAll('.link-card');
             cards.forEach(card => {
                 card.style.display = '';
             });
 
-            const totalCountSpan = document.querySelector('.text-right span.font-semibold');
             totalCountSpan.textContent = cards.length;
-
-            document.getElementById('noResultsMessage').classList.add('hidden');
+            noResultsMessage.classList.add('hidden');
         });
     </script>
 
