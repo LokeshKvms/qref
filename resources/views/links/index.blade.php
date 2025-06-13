@@ -16,10 +16,11 @@
         {{-- Page Header --}}
         <div class="mb-10 text-center">
             <h1 id="clearFiltersBtn"
-                class="text-3xl font-bold text-gray-800 flex items-center justify-center space-x-2 hover:scale-105 transition duration-300 cursor-pointer">
-                <svg class="h-8 w-8 text-blue-600" fill="none" stroke="currentColor" stroke-width="2"
-                    viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"
-                    xmlns="http://www.w3.org/2000/svg">
+                class="text-3xl font-bold text-gray-800 flex items-center justify-center space-x-2 transition-transform duration-300 hover:scale-105 cursor-pointer group">
+
+                <svg class="h-8 w-8 text-blue-600 transition-transform duration-500 group-hover:rotate-[360deg]"
+                    fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round"
+                    stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
                     <path d="M10 13a5 5 0 007.07 0l2.83-2.83a5 5 0 00-7.07-7.07l-1.41 1.41" />
                     <path d="M14 11a5 5 0 00-7.07 0l-2.83 2.83a5 5 0 007.07 7.07l1.41-1.41" />
                 </svg>
@@ -47,7 +48,7 @@
         {{-- Links Grid --}}
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6" id="linksContainer">
             @foreach ($links as $link)
-                <div class="link-card bg-white rounded-lg shadow-sm hover:shadow-md transition duration-300 p-5 flex items-start space-x-4"
+                <div class="link-card bg-white rounded-lg shadow-md hover:shadow-lg transition duration-300 p-5 flex items-start space-x-4"
                     data-tags="{{ implode(',', $link->tags->pluck('id')->toArray()) }}">
 
                     {{-- Left: image_url or favicon --}}
@@ -61,7 +62,7 @@
                             {{-- Title --}}
                             <a href="{{ $link->url }}" target="_blank"
                                 class="text-lg font-semibold text-gray-900 hover:text-blue-600 truncate">
-                                {{ $link->title }}
+                                {{ Str::title($link->title) }}
                             </a>
 
                             {{-- Tags --}}
@@ -118,9 +119,35 @@
 
 
         {{-- Footer --}}
-        <footer class="mt-16 text-center text-sm text-gray-400 border-t pt-6">
+        <footer class="mt-16 text-center text-sm text-gray-800 border-t pt-6">
             Built with ❤️ by K V M S LOKESH
         </footer>
+
+        {{-- <div x-data="{ showText: true, lastY: window.scrollY }" x-init="window.addEventListener('scroll', () => {
+            showText = window.scrollY < lastY || window.scrollY < 100;
+            lastY = window.scrollY;
+        });" class="fixed bottom-6 right-6 z-50">
+            <a href="{{ route('links.create') }}"
+                class="flex items-center bg-blue-600 text-white rounded-full shadow-lg hover:bg-blue-700 transition-all duration-300 overflow-hidden whitespace-nowrap"
+                :class="showText ? 'px-4 py-4' : 'px-3 py-3'">
+
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                </svg>
+
+                <span class="ml-2 text-sm font-medium inline-flex items-center overflow-hidden whitespace-nowrap"
+                    x-bind:style="showText
+                        ?
+                        'opacity: 1; width: 80px; padding-left: 0.5rem; padding-right: 0.5rem; transition: width 300ms ease, opacity 300ms ease, padding 300ms ease;' :
+                        'opacity: 0; width: 0; padding-left: 0; padding-right: 0; transition: width 300ms ease, opacity 300ms ease, padding 300ms ease;'"
+                    aria-hidden="true">
+                    Add Link
+                </span>
+
+
+            </a>
+        </div> --}}
     </div>
 
     <script>
@@ -258,5 +285,6 @@
             noResultsMessage.classList.add('hidden');
         });
     </script>
+
 
 </x-app-layout>
