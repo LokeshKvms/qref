@@ -15,7 +15,8 @@
 
         {{-- Page Header --}}
         <div class="mb-10 text-center">
-            <h1 class="text-3xl font-bold text-gray-800 flex items-center justify-center space-x-2">
+            <h1 id="clearFiltersBtn"
+                class="text-3xl font-bold text-gray-800 flex items-center justify-center space-x-2 hover:scale-105 transition duration-300 cursor-pointer">
                 <svg class="h-8 w-8 text-blue-600" fill="none" stroke="currentColor" stroke-width="2"
                     viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"
                     xmlns="http://www.w3.org/2000/svg">
@@ -123,12 +124,11 @@
     </div>
 
     <script>
-        // Create a small toast container
         const toast = document.createElement('div');
-        toast.style.position = 'absolute'; // Changed from fixed to absolute
+        toast.style.position = 'absolute';
         toast.style.top = '0';
         toast.style.left = '0';
-        toast.style.transform = 'none'; // reset transform, will set dynamically
+        toast.style.transform = 'none';
         toast.style.backgroundColor = 'rgba(0,0,0,0.7)';
         toast.style.color = 'white';
         toast.style.padding = '8px 12px';
@@ -139,7 +139,6 @@
         toast.style.transition = 'opacity 0.3s ease-in-out';
         document.body.appendChild(toast);
 
-        // Show toast near the clicked element
         function showToast(message, nearElement) {
             toast.textContent = message;
 
@@ -148,10 +147,8 @@
                 const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
                 const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
 
-                // Position toast 10px below the button, horizontally centered
                 toast.style.top = (rect.bottom + scrollTop + 10) + 'px';
                 toast.style.left = (rect.left + scrollLeft + rect.width / 2) + 'px';
-                // toast.style.transform = 'translateX(-50%)';
             }
 
             toast.style.opacity = '1';
@@ -161,36 +158,6 @@
             }, 2000);
         }
 
-        // Search input filtering logic (unchanged)
-        document.getElementById('searchInput').addEventListener('input', function() {
-            const query = this.value.toLowerCase().trim();
-            const cards = document.querySelectorAll('.grid > div');
-            let visibleCount = 0;
-
-            cards.forEach(card => {
-                const title = card.querySelector('a.text-lg')?.textContent.toLowerCase() || '';
-                const url = card.querySelector('a.text-sm')?.textContent.toLowerCase() || '';
-
-                if (title.includes(query) || url.includes(query)) {
-                    card.style.display = '';
-                    visibleCount++;
-                } else {
-                    card.style.display = 'none';
-                }
-            });
-
-            const totalCountSpan = document.querySelector('.text-right span.font-semibold');
-            totalCountSpan.textContent = visibleCount;
-
-            const noResultsMessage = document.getElementById('noResultsMessage');
-            if (visibleCount === 0) {
-                noResultsMessage.classList.remove('hidden');
-            } else {
-                noResultsMessage.classList.add('hidden');
-            }
-        });
-
-        // Copy button click event with updated toast position
         document.querySelectorAll('.copy-btn').forEach(button => {
             button.addEventListener('click', () => {
                 const url = button.getAttribute('data-url');
@@ -224,9 +191,35 @@
                 }
             });
         });
-    </script>
 
-    <script>
+        document.getElementById('searchInput').addEventListener('input', function() {
+            const query = this.value.toLowerCase().trim();
+            const cards = document.querySelectorAll('.grid > div');
+            let visibleCount = 0;
+
+            cards.forEach(card => {
+                const title = card.querySelector('a.text-lg')?.textContent.toLowerCase() || '';
+                const url = card.querySelector('a.text-sm')?.textContent.toLowerCase() || '';
+
+                if (title.includes(query) || url.includes(query)) {
+                    card.style.display = '';
+                    visibleCount++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+
+            const totalCountSpan = document.querySelector('.text-right span.font-semibold');
+            totalCountSpan.textContent = visibleCount;
+
+            const noResultsMessage = document.getElementById('noResultsMessage');
+            if (visibleCount === 0) {
+                noResultsMessage.classList.remove('hidden');
+            } else {
+                noResultsMessage.classList.add('hidden');
+            }
+        });
+
         document.querySelectorAll('.tag-badge').forEach(badge => {
             badge.addEventListener('click', () => {
                 const tagId = badge.dataset.tagId;
@@ -243,7 +236,6 @@
                     }
                 });
 
-                // Update total count
                 const totalCountSpan = document.querySelector('.text-right span.font-semibold');
                 totalCountSpan.textContent = visibleCount;
 
@@ -255,8 +247,21 @@
                 }
             });
         });
+
+        document.getElementById('clearFiltersBtn').addEventListener('click', () => {
+            const searchInput = document.getElementById('searchInput');
+            searchInput.value = '';
+
+            const cards = document.querySelectorAll('.link-card');
+            cards.forEach(card => {
+                card.style.display = '';
+            });
+
+            const totalCountSpan = document.querySelector('.text-right span.font-semibold');
+            totalCountSpan.textContent = cards.length;
+
+            document.getElementById('noResultsMessage').classList.add('hidden');
+        });
     </script>
-
-
 
 </x-app-layout>
