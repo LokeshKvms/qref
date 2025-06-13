@@ -26,28 +26,26 @@ class LinkController extends Controller
             'title' => 'required|string|max:255',
             'url' => 'required|url|max:2048',
             'image_url' => 'nullable|url|max:2048',
-            'tags' => 'array',
-            'new_tag' => 'nullable|string|max:255',
+            'tags' => 'nullable|array',
         ]);
 
         $link = Auth::user()->links()->create($request->only('title', 'url', 'image_url'));
 
         $tagIds = [];
 
-        // Existing tags
-        if ($request->has('tags')) {
-            $tagIds = array_map('intval', $request->input('tags'));
-        }
-
-        // Handle new tag
-        if ($request->filled('new_tag')) {
-            $newTag = Tag::firstOrCreate(['name' => $request->input('new_tag')]);
-            $tagIds[] = $newTag->id;
+        foreach ($request->input('tags', []) as $tagInput) {
+            // Handle both numeric IDs and new tag strings
+            if (is_numeric($tagInput)) {
+                $tagIds[] = (int) $tagInput;
+            } else {
+                $tag = Tag::firstOrCreate(['name' => trim($tagInput)]);
+                $tagIds[] = $tag->id;
+            }
         }
 
         $link->tags()->sync($tagIds);
 
-        return redirect()->route('links.index')->with('success', 'Link added with tags!');
+        return redirect()->route('links.index')->with('success', 'Link created successfully with tags!');
     }
 
     public function edit(Link $link)
@@ -64,9 +62,23 @@ class LinkController extends Controller
             'title' => 'required|string|max:255',
             'url' => 'required|url|max:2048',
             'image_url' => 'nullable|url|max:2048',
+            'tags' => 'nullable|array',
         ]);
 
         $link->update($request->only('title', 'url', 'image_url'));
+
+        // Process tags
+        $tagIds = [];
+        foreach ($request->input('tags', []) as $tagInput) {
+            if (is_numeric($tagInput)) {
+                $tagIds[] = (int) $tagInput;
+            } else {
+                $tag = Tag::firstOrCreate(['name' => trim($tagInput)]);
+                $tagIds[] = $tag->id;
+            }
+        }
+
+        $link->tags()->sync($tagIds);
 
         return redirect()->route('links.index')->with('success', 'Link updated!');
     }
