@@ -1,6 +1,11 @@
+@php
+    $allTags = \App\Models\Tag::all();
+@endphp
+
 <x-app-layout>
     <div class="max-w-md mx-auto py-10">
-        <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md px-10 pb-10 pt-4 shadow-sm">
+        <div
+            class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md px-10 pb-10 pt-4 shadow-sm">
             <form method="POST" action="{{ route('links.store') }}" class="space-y-6">
                 @csrf
 
@@ -56,13 +61,32 @@
                                     d="M3 5a2 2 0 012-2h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V5zm16 0L10 14l-4-4-3 3v5h16V5z" />
                             </svg>
                         </span>
-                        <input placeholder="https://placehold.co/10?text=Icon" type="url" name="image_url" value="{{ old('image_url') }}"
+                        <input placeholder="https://placehold.co/10?text=Icon" type="url" name="image_url"
+                            value="{{ old('image_url') }}"
                             class="w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded text-sm focus:outline-none focus:ring focus:border-blue-400">
                     </div>
                     <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Leave blank to use site favicon</p>
                     @error('image_url')
                         <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
                     @enderror
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Tags</label>
+                    <select name="tags[]" id="tags" multiple
+                        class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded">
+                        @foreach ($allTags as $tag)
+                            <option value="{{ $tag->id }}">{{ $tag->name }}</option>
+                        @endforeach
+                        <option value="__other__">Other</option>
+                    </select>
+                </div>
+
+                <div id="new-tag-container" class="mt-2 hidden">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">New Tag</label>
+                    <input type="text" name="new_tag"
+                        class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded"
+                        placeholder="Enter new tag">
                 </div>
 
                 {{-- Submit Button --}}
@@ -75,4 +99,20 @@
             </form>
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const tagSelect = document.getElementById('tags');
+            const newTagContainer = document.getElementById('new-tag-container');
+
+            tagSelect.addEventListener('change', function() {
+                const selectedValues = Array.from(tagSelect.selectedOptions).map(opt => opt.value);
+                if (selectedValues.includes('__other__')) {
+                    newTagContainer.classList.remove('hidden');
+                } else {
+                    newTagContainer.classList.add('hidden');
+                }
+            });
+        });
+    </script>
 </x-app-layout>

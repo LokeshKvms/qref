@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Link;
+use App\Models\Tag;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -25,11 +26,28 @@ class LinkController extends Controller
             'title' => 'required|string|max:255',
             'url' => 'required|url|max:2048',
             'image_url' => 'nullable|url|max:2048',
+            'tags' => 'array',
+            'new_tag' => 'nullable|string|max:255',
         ]);
 
-        Auth::user()->links()->create($request->only('title', 'url', 'image_url'));
+        $link = Auth::user()->links()->create($request->only('title', 'url', 'image_url'));
 
-        return redirect()->route('links.index')->with('success', 'Link added!');
+        $tagIds = [];
+
+        // Existing tags
+        if ($request->has('tags')) {
+            $tagIds = array_map('intval', $request->input('tags'));
+        }
+
+        // Handle new tag
+        if ($request->filled('new_tag')) {
+            $newTag = Tag::firstOrCreate(['name' => $request->input('new_tag')]);
+            $tagIds[] = $newTag->id;
+        }
+
+        $link->tags()->sync($tagIds);
+
+        return redirect()->route('links.index')->with('success', 'Link added with tags!');
     }
 
     public function edit(Link $link)

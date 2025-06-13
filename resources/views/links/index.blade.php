@@ -44,7 +44,7 @@
         </div>
 
         {{-- Links Grid --}}
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
             @foreach ($links as $link)
                 <div
                     class="bg-white rounded-lg shadow-sm hover:shadow-md transition duration-300 p-5 flex items-start space-x-4">
@@ -65,7 +65,7 @@
                         {{-- URL --}}
                         <a href="{{ $link->url }}" target="_blank"
                             class="text-sm text-gray-500 mt-1 truncate break-words" title="{{ $link->url }}">
-                            {{ \Illuminate\Support\Str::limit($link->url, 30) }}
+                            {{ \Illuminate\Support\Str::limit($link->url, 40) }}
                         </a>
 
                         {{-- Badges and actions --}}

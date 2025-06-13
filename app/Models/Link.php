@@ -9,7 +9,13 @@ class Link extends Model
     use HasFactory;
 
     protected $fillable = ['title', 'url', 'image_url'];
-    public function user(){
+    public function user()
+    {
         return $this->belongsTo(User::class);
+    }
+
+    public function tags()
+    {
+        return $this->belongsToMany(Tag::class);
     }
 }
