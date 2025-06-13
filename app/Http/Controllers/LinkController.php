@@ -1,9 +1,10 @@
 <?php
-// app/Http/Controllers/LinkController.php
+
 namespace App\Http\Controllers;
 
 use App\Models\Link;
 use App\Models\Tag;
+use App\Models\UserTag;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -11,13 +12,16 @@ class LinkController extends Controller
 {
     public function index()
     {
-        $links = Auth::user()->links()->latest()->get();
+        $links = Auth::user()->links()->with(['globalTags', 'userTags'])->latest()->get();
         return view('links.index', compact('links'));
     }
 
     public function create()
     {
-        return view('links.create');
+        $globalTags = Tag::all();
+        $userTags = Auth::user()->userTags()->get();
+
+        return view('links.create', compact('globalTags', 'userTags'));
     }
 
     public function store(Request $request)
@@ -29,21 +33,32 @@ class LinkController extends Controller
             'tags' => 'nullable|array',
         ]);
 
-        $link = Auth::user()->links()->create($request->only('title', 'url', 'image_url'));
+        $user = Auth::user();
+        $link = $user->links()->create($request->only('title', 'url', 'image_url'));
 
-        $tagIds = [];
+        $globalTagIds = [];
+        $userTagIds = [];
 
         foreach ($request->input('tags', []) as $tagInput) {
-            // Handle both numeric IDs and new tag strings
-            if (is_numeric($tagInput)) {
-                $tagIds[] = (int) $tagInput;
+            if (str_starts_with($tagInput, 'global:')) {
+                $tagId = (int) str_replace('global:', '', $tagInput);
+                $globalTagIds[] = $tagId;
+            } elseif (str_starts_with($tagInput, 'user:')) {
+                $tagId = (int) str_replace('user:', '', $tagInput);
+                $userTagIds[] = $tagId;
             } else {
-                $tag = Tag::firstOrCreate(['name' => trim($tagInput)]);
-                $tagIds[] = $tag->id;
+                // New user tag string
+                $tag = UserTag::firstOrCreate([
+                    'user_id' => $user->id,
+                    'name' => trim($tagInput),
+                ]);
+                $userTagIds[] = $tag->id;
             }
         }
 
-        $link->tags()->sync($tagIds);
+        // Attach tags via pivot
+        $link->globalTags()->sync($globalTagIds);
+        $link->userTags()->sync($userTagIds);
 
         return redirect()->route('links.index')->with('success', 'Link created successfully with tags!');
     }
@@ -51,7 +66,11 @@ class LinkController extends Controller
     public function edit(Link $link)
     {
         $this->authorize('update', $link);
-        return view('links.edit', compact('link'));
+
+        $globalTags = Tag::all();
+        $userTags = Auth::user()->userTags()->get();
+
+        return view('links.edit', compact('link', 'globalTags', 'userTags'));
     }
 
     public function update(Request $request, Link $link)
@@ -67,18 +86,27 @@ class LinkController extends Controller
 
         $link->update($request->only('title', 'url', 'image_url'));
 
-        // Process tags
-        $tagIds = [];
+        $globalTagIds = [];
+        $userTagIds = [];
+
         foreach ($request->input('tags', []) as $tagInput) {
-            if (is_numeric($tagInput)) {
-                $tagIds[] = (int) $tagInput;
+            if (str_starts_with($tagInput, 'global:')) {
+                $tagId = (int) str_replace('global:', '', $tagInput);
+                $globalTagIds[] = $tagId;
+            } elseif (str_starts_with($tagInput, 'user:')) {
+                $tagId = (int) str_replace('user:', '', $tagInput);
+                $userTagIds[] = $tagId;
             } else {
-                $tag = Tag::firstOrCreate(['name' => trim($tagInput)]);
-                $tagIds[] = $tag->id;
+                $tag = UserTag::firstOrCreate([
+                    'user_id' => $link->user_id,
+                    'name' => trim($tagInput),
+                ]);
+                $userTagIds[] = $tag->id;
             }
         }
 
-        $link->tags()->sync($tagIds);
+        $link->globalTags()->sync($globalTagIds);
+        $link->userTags()->sync($userTagIds);
 
         return redirect()->route('links.index')->with('success', 'Link updated!');
     }

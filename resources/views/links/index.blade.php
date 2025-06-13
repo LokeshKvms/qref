@@ -44,10 +44,10 @@
         </div>
 
         {{-- Links Grid --}}
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6" id="linksContainer">
             @foreach ($links as $link)
-                <div
-                    class="bg-white rounded-lg shadow-sm hover:shadow-md transition duration-300 p-5 flex items-start space-x-4">
+                <div class="link-card bg-white rounded-lg shadow-sm hover:shadow-md transition duration-300 p-5 flex items-start space-x-4"
+                    data-tags="{{ implode(',', $link->tags->pluck('id')->toArray()) }}">
 
                     {{-- Left: image_url or favicon --}}
                     <img src="{{ $link->image_url ?: 'https://www.google.com/s2/favicons?sz=64&domain=' . parse_url($link->url, PHP_URL_HOST) }}"
@@ -56,11 +56,24 @@
 
                     {{-- Right: content + actions --}}
                     <div class="flex flex-col flex-1 min-w-0">
-                        {{-- Title --}}
-                        <a href="{{ $link->url }}" target="_blank"
-                            class="text-lg font-semibold text-gray-900 hover:text-blue-600 truncate">
-                            {{ $link->title }}
-                        </a>
+                        <div class="flex justify-between items-start">
+                            {{-- Title --}}
+                            <a href="{{ $link->url }}" target="_blank"
+                                class="text-lg font-semibold text-gray-900 hover:text-blue-600 truncate">
+                                {{ $link->title }}
+                            </a>
+
+                            {{-- Tags --}}
+                            <div class="flex flex-wrap justify-end gap-1 ml-3">
+                                @foreach ($link->tags as $tag)
+                                    <button type="button"
+                                        class="tag-badge bg-gray-200 text-gray-700 hover:bg-blue-200 hover:text-blue-700 text-xs px-2 py-0.5 rounded"
+                                        data-tag-id="{{ $tag->id }}">
+                                        {{ $tag->name }}
+                                    </button>
+                                @endforeach
+                            </div>
+                        </div>
 
                         {{-- URL --}}
                         <a href="{{ $link->url }}" target="_blank"
@@ -70,11 +83,9 @@
 
                         {{-- Badges and actions --}}
                         <div class="mt-3 flex space-x-3 items-center">
-
-                            {{-- Copy --}}
                             <button data-url="{{ $link->url }}"
                                 class="copy-btn flex items-center justify-center w-20 h-8 text-gray-500 hover:text-gray-700 bg-gray-100 hover:bg-gray-200 transition rounded-md text-xs"
-                                title="Copy Link" aria-label="Copy link URL">
+                                title="Copy Link">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none"
                                     stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round"
                                     stroke-linejoin="round">
@@ -84,13 +95,11 @@
                                 Copy
                             </button>
 
-                            {{-- Edit --}}
                             <a href="{{ route('links.edit', $link) }}"
                                 class="flex items-center justify-center w-20 h-8 text-blue-600 hover:text-blue-800 transition bg-blue-100 hover:bg-blue-200 rounded-md text-xs font-medium">
                                 Edit
                             </a>
 
-                            {{-- Delete --}}
                             <form method="POST" action="{{ route('links.destroy', $link) }}"
                                 onsubmit="return confirm('Delete this link?');" class="inline-block w-20">
                                 @csrf
@@ -101,11 +110,11 @@
                                 </button>
                             </form>
                         </div>
-
                     </div>
                 </div>
             @endforeach
         </div>
+
 
         {{-- Footer --}}
         <footer class="mt-16 text-center text-sm text-gray-400 border-t pt-6">
@@ -216,6 +225,38 @@
             });
         });
     </script>
+
+    <script>
+        document.querySelectorAll('.tag-badge').forEach(badge => {
+            badge.addEventListener('click', () => {
+                const tagId = badge.dataset.tagId;
+                const cards = document.querySelectorAll('.link-card');
+                let visibleCount = 0;
+
+                cards.forEach(card => {
+                    const tags = card.dataset.tags.split(',');
+                    if (tags.includes(tagId)) {
+                        card.style.display = '';
+                        visibleCount++;
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+
+                // Update total count
+                const totalCountSpan = document.querySelector('.text-right span.font-semibold');
+                totalCountSpan.textContent = visibleCount;
+
+                const noResultsMessage = document.getElementById('noResultsMessage');
+                if (visibleCount === 0) {
+                    noResultsMessage.classList.remove('hidden');
+                } else {
+                    noResultsMessage.classList.add('hidden');
+                }
+            });
+        });
+    </script>
+
 
 
 </x-app-layout>

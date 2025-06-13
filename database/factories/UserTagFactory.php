@@ -2,29 +2,27 @@
 
 namespace Database\Factories;
 
-use App\Models\Link;
 use App\Models\User;
+use App\Models\UserTag;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Link>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\UserTag>
  */
-class LinkFactory extends Factory
+class UserTagFactory extends Factory
 {
     /**
      * Define the model's default state.
      *
      * @return array<string, mixed>
      */
-    protected $model = Link::class;
+    protected $model = UserTag::class;
 
     public function definition()
     {
         return [
             'user_id' => User::factory(),
-            'title' => $this->faker->sentence(3),
-            'url' => $this->faker->url(),
-            'image_url' => $this->faker->optional()->imageUrl(100, 100),
+            'name' => $this->faker->unique()->word(),
         ];
     }
 }

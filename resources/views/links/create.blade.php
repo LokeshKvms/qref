@@ -1,9 +1,9 @@
 @php
-    $allTags = \App\Models\Tag::all();
+    $globalTags = \App\Models\Tag::all();
+    $userTags = auth()->user()->userTags;
 @endphp
 
 <x-app-layout>
-    <!-- Tom Select CSS -->
     <link href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.css" rel="stylesheet">
 
     <div class="max-w-md mx-auto py-10">
@@ -50,8 +50,11 @@
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Tags</label>
                     <select id="tags" name="tags[]" multiple placeholder="Select or add tags...">
-                        @foreach ($allTags as $tag)
-                            <option value="{{ $tag->id }}">{{ $tag->name }}</option>
+                        @foreach ($globalTags as $tag)
+                            <option value="global:{{ $tag->id }}">{{ $tag->name }}</option>
+                        @endforeach
+                        @foreach ($userTags as $tag)
+                            <option value="user:{{ $tag->id }}">{{ $tag->name }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -67,7 +70,6 @@
         </div>
     </div>
 
-    <!-- Tom Select JS -->
     <script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
     <script>
         new TomSelect("#tags", {

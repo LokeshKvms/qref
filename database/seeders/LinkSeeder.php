@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Link;
 use App\Models\Tag;
 use App\Models\User;
+use App\Models\UserTag;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -18,20 +19,16 @@ class LinkSeeder extends Seeder
     public function run()
     {
         //
-        $user = User::first();
+        $users = User::factory(10)->create();
+        $globalTags = Tag::factory(10)->create();
 
-        // Make sure some tags exist
-        $tags = Tag::all();
+        $users->each(function ($user) use ($globalTags) {
+            $userTags = UserTag::factory(5)->create(['user_id' => $user->id]);
 
-        $links = Link::factory()->count(5)->create([
-            'user_id' => $user->id,
-        ]);
-
-        // Attach 1–3 random tags to each link
-        foreach ($links as $link) {
-            $link->tags()->attach(
-                $tags->random(rand(1, min(3, $tags->count())))->pluck('id')->toArray()
-            );
-        }
+            Link::factory(5)->create(['user_id' => $user->id])->each(function ($link) use ($globalTags, $userTags) {
+                $link->globalTags()->attach($globalTags->random(rand(1, 3))->pluck('id')->toArray());
+                $link->userTags()->attach($userTags->random(rand(1, 2))->pluck('id')->toArray());
+            });
+        });
     }
 }

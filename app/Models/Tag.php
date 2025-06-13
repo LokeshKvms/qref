@@ -9,10 +9,11 @@ class Tag extends Model
 {
     use HasFactory;
 
-    protected $guarded = [];
+    protected $fillable = ['name'];
+
     public function links()
     {
-        return $this->belongsToMany(Link::class);
+        return $this->belongsToMany(Link::class, 'link_tag')->withTimestamps();
     }
 
 }

@@ -12,11 +12,12 @@ return new class extends Migration {
      */
     public function up()
     {
-        Schema::create('link_tag', function (Blueprint $table) {
+        Schema::create('user_tags', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('link_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('tag_id')->constrained()->cascadeOnDelete();
+            $table->foreignIdFor(\App\Models\User::class)->constrained()->cascadeOnDelete();
+            $table->string('name');
             $table->timestamps();
+            $table->unique(['user_id', 'name']);
         });
     }
 
@@ -27,6 +28,6 @@ return new class extends Migration {
      */
     public function down()
     {
-        Schema::dropIfExists('link_tag');
+        Schema::dropIfExists('user_tags');
     }
 };

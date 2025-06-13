@@ -1,5 +1,10 @@
 @php
-    $allTags = \App\Models\Tag::all();
+    $globalTags = \App\Models\Tag::all();
+    $userTags = auth()->user()->userTags;
+    $selectedTags = collect([
+        ...$link->globalTags->map(fn($tag) => 'global:' . $tag->id),
+        ...$link->userTags->map(fn($tag) => 'user:' . $tag->id),
+    ]);
 @endphp
 
 <x-app-layout>
@@ -50,9 +55,15 @@
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Tags</label>
                     <select id="tags" name="tags[]" multiple placeholder="Select or add tags...">
-                        @foreach ($allTags as $tag)
-                            <option value="{{ $tag->id }}"
-                                {{ collect(old('tags', $link->tags->pluck('id')->toArray()))->contains($tag->id) ? 'selected' : '' }}>
+                        @foreach ($globalTags as $tag)
+                            <option value="global:{{ $tag->id }}"
+                                {{ $selectedTags->contains('global:' . $tag->id) ? 'selected' : '' }}>
+                                {{ $tag->name }}
+                            </option>
+                        @endforeach
+                        @foreach ($userTags as $tag)
+                            <option value="user:{{ $tag->id }}"
+                                {{ $selectedTags->contains('user:' . $tag->id) ? 'selected' : '' }}>
                                 {{ $tag->name }}
                             </option>
                         @endforeach

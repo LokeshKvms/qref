@@ -16,10 +16,10 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        User::factory(5)->create();
-
+        User::factory(10)->create();
         $this->call([
             TagSeeder::class,
+            UserTagSeeder::class,
             LinkSeeder::class,
         ]);
         // \App\Models\User::factory()->create([
