@@ -21,7 +21,7 @@
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Title</label>
                     <input type="text" name="title" value="{{ old('title', $link->title) }}"
-                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded text-sm focus:outline-none focus:ring focus:border-blue-400"
+                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded text-sm focus:outline-none focus:ring focus:border-indigo-400"
                         required>
                     @error('title')
                         <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
@@ -32,7 +32,7 @@
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">URL</label>
                     <input type="url" name="url" value="{{ old('url', $link->url) }}"
-                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded text-sm focus:outline-none focus:ring focus:border-blue-400"
+                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded text-sm focus:outline-none focus:ring focus:border-indigo-400"
                         required>
                     @error('url')
                         <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
@@ -44,7 +44,7 @@
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Optional Image
                         URL</label>
                     <input type="url" name="image_url" value="{{ old('image_url', $link->image_url) }}"
-                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded text-sm focus:outline-none focus:ring focus:border-blue-400">
+                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded text-sm focus:outline-none focus:ring focus:border-indigo-400">
                     <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Leave blank to use site favicon</p>
                     @error('image_url')
                         <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
@@ -73,7 +73,7 @@
                 {{-- Submit --}}
                 <div>
                     <button type="submit"
-                        class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded transition">
+                        class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded transition">
                         Update Link
                     </button>
                 </div>

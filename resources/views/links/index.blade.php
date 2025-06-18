@@ -5,7 +5,7 @@
                 {{ __('Links') }}
             </h2>
             <a href="{{ route('links.create') }}"
-                class="inline-block bg-blue-600 text-white px-4 py-2 rounded shadow hover:bg-blue-700 transition text-sm">
+                class="inline-block bg-indigo-600 text-white px-4 py-2 rounded shadow hover:bg-indigo-700 transition text-sm">
                 + Add New Link
             </a>
         </div>
@@ -18,14 +18,14 @@
             <h1 id="clearFiltersBtn"
                 class="text-3xl font-bold text-gray-800 flex items-center justify-center space-x-2 transition-transform duration-300 hover:scale-105 cursor-pointer group">
 
-                <svg class="h-8 w-8 text-blue-600 transition-transform duration-500 group-hover:rotate-[360deg]"
+                <svg class="h-8 w-8 text-indigo-600 transition-transform duration-500 group-hover:rotate-[360deg]"
                     fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round"
                     stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
                     <path d="M10 13a5 5 0 007.07 0l2.83-2.83a5 5 0 00-7.07-7.07l-1.41 1.41" />
                     <path d="M14 11a5 5 0 00-7.07 0l-2.83 2.83a5 5 0 007.07 7.07l1.41-1.41" />
                 </svg>
 
-                <span>My Saved Links</span>
+                <span>My Saved links</span>
             </h1>
             <p class="text-gray-600 mt-2">Easily manage and access your favorite resources.</p>
         </div>
@@ -33,13 +33,13 @@
         {{-- Search Bar --}}
         <div class="mb-6 flex justify-center">
             <input id="searchInput" type="text" placeholder="Search links..."
-                class="w-full sm:w-3/4 md:w-1/2 px-4 py-2 border rounded shadow-sm focus:outline-none focus:ring focus:border-blue-300" />
+                class="w-full sm:w-3/4 md:w-1/2 px-4 py-2 border rounded shadow-sm focus:outline-none focus:ring focus:border-indigo-300" />
 
         </div>
 
         {{-- Stats --}}
         <div class="mb-6 text-right text-sm text-gray-600">
-            Total Links: <span class="font-semibold text-gray-800">{{ $links->count() }}</span>
+            Total Links: <span class="font-semibold text-indigo-800">{{ $links->count() }}</span>
         </div>
         <div id="noResultsMessage" class="text-center text-gray-500 mt-6 hidden">
             No links found matching your search.
@@ -61,7 +61,7 @@
                         <div class="flex justify-between items-start">
                             {{-- Title --}}
                             <a href="{{ $link->url }}" target="_blank"
-                                class="text-lg font-semibold text-gray-900 hover:text-blue-600 truncate">
+                                class="text-lg font-semibold text-gray-900 hover:text-indigo-600 truncate">
                                 {{ Str::title($link->title) }}
                             </a>
 
@@ -69,7 +69,7 @@
                             <div class="flex flex-wrap justify-end gap-1 ml-3">
                                 @foreach ($link->tags as $tag)
                                     <button type="button"
-                                        class="tag-badge bg-gray-200 text-gray-700 hover:bg-blue-200 hover:text-blue-700 text-xs px-2 py-0.5 rounded"
+                                        class="tag-badge bg-gray-200 text-gray-700 hover:bg-indigo-200 hover:text-indigo-700 text-xs px-2 py-0.5 rounded"
                                         data-tag-id="{{ $tag->id }}">
                                         {{ $tag->name }}
                                     </button>
@@ -98,7 +98,7 @@
                             </button>
 
                             <a href="{{ route('links.edit', $link) }}"
-                                class="flex items-center justify-center w-20 h-8 text-blue-600 hover:text-blue-800 transition bg-blue-100 hover:bg-blue-200 rounded-md text-xs font-medium">
+                                class="flex items-center justify-center w-20 h-8 text-indigo-600 hover:text-indigo-800 transition bg-indigo-100 hover:bg-indigo-200 rounded-md text-xs font-medium">
                                 Edit
                             </a>
 
@@ -119,7 +119,7 @@
 
 
         {{-- Footer --}}
-        <footer class="mt-16 text-center text-sm text-gray-800 border-t pt-6">
+        <footer class="mt-16 text-center text-sm text-indigo-800 border-t pt-6">
             Built with ❤️ by K V M S LOKESH
         </footer>
 
@@ -128,7 +128,7 @@
             lastY = window.scrollY;
         });" class="fixed bottom-6 right-6 z-50">
             <a href="{{ route('links.create') }}"
-                class="flex items-center bg-blue-600 text-white rounded-full shadow-lg hover:bg-blue-700 transition-all duration-300 overflow-hidden whitespace-nowrap"
+                class="flex items-center bg-indigo-600 text-white rounded-full shadow-lg hover:bg-indigo-700 transition-all duration-300 overflow-hidden whitespace-nowrap"
                 :class="showText ? 'px-4 py-4' : 'px-3 py-3'">
 
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24"
